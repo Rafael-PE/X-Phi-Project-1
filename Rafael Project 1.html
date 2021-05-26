@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>My experiment</title>
+    <!-- Load the jsPsych script -->
+    <script src="jspsych/jspsych.js"></script>
+
+    <!--
+    Load plugins for each type of trial you want in your experiment
+    see https://www.jspsych.org/plugins/list-of-plugins/ for reference and see
+    the folder "jspsych/plugins" locally for the files
+    -->
+    <script src="jspsych/plugins/jspsych-html-button-response.js"></script>
+    <script src="jspsych/plugins/jspsych-survey-text.js"></script>
+    <script src="jspsych/plugins/jspsych-survey-multi-choice.js"></script>
+    <script src="jspsych/plugins/jspsych-instructions.js"></script>
+    <script src="jspsych/plugins/jspsych-survey-text.js"></script>
+
+
+    <!-- Load the CSS style -->
+    <link href="jspsych/css/jspsych.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <!-- Leave the body blank -->
+  </body>
+  <script>
+
+    var timeline = [];
+
+var welcome = "Welcome to this experiment. Please read the following story and assess how much you agree with the subsequently presented claim."
+
+var truetemp_story = "One day Charles was knocked out by a falling rock;" +
+"as a result his brain was rewired so that he is always right whenever he estimates the temperature where he is." +
+"Charles is unaware that his brain has been altered in this way. A few weeks later, this brain rewiring leads him to" +
+ "believe that it is 21 degrees Celsius in his room. Apart from his estimation, he has no other reasons to think that it is 21 degrees." +
+ "In fact, it is 21 degrees."
+
+var vignette = {
+  type: 'instructions',
+  pages: [welcome, truetemp_story,],
+  show_clickable_nav: true,
+}
+
+
+timeline.push(vignette)
+
+var page_1_options = ["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"];
+
+
+var multi_choice_block_knowledge = {
+  type: 'survey-multi-choice',
+  questions: [
+  {
+    prompt: "Please indicate to what extent you agree or disagree with the following claim: \"Charles <b>knows</b> that it is 21 degrees in his room \".",
+    name: 'TruetempKnowledge', options: page_1_options,
+    required: true
+  },
+],
+};
+
+
+var multi_choice_block_belief = {
+  type: 'survey-multi-choice',
+  questions: [{
+      prompt: "Please indicate to what extent you agree or disagree with the following claim: \"Charles <b>believes</b> that it is 21 degrees in his room \".",
+      name: 'TruetempBelief',
+      options: page_1_options,
+      required: true
+  },],
+};
+
+// in order to eliminate potential 'effects of order' that might arise from being
+// presented with the question of knowledge first (or belief, respectively),
+// I propose to randomise the order of appearance (as separate pages).
+// After both questions are answered, the participant will be asked to explain his/her choices.
+
+if (Math.random()< 0.5) {
+      timeline.push(multi_choice_block_belief);
+      timeline.push(multi_choice_block_knowledge);
+    } else {
+      timeline.push(multi_choice_block_knowledge);
+      timeline.push(multi_choice_block_belief);
+    }
+
+
+var explanation =
+{
+type: 'survey-text',
+questions: [{prompt: "Please give a brief explanation of your choices.",
+required: true,
+rows: 10,
+columns: 60,
+name: 'explanationTrueTemp',
+}]
+}
+timeline.push(explanation)
+
+    jsPsych.init({
+      timeline: timeline
+    })
+
+  </script>
+</html>
